@@ -27,20 +27,29 @@ class MessageViewSet(viewsets.ModelViewSet):
         return HttpResponse(request.GET['hub.challenge'], content_type='text/plain')
 
     def make_response(self, sender_id, message):
+        print(message)
         conversation, created = Conversation.objects.get_or_create(sender_id=sender_id, finished=False)
         if created:
             self.send_message(sender_id, InitialResponse())
         else:
-            if message == 'YES_JUICE':
+            if message == 'YES_JUICE' or message=='NEW_ORDER_PAYLOAD':
                 elements = ProductCategory.objects.to_quick_reply(ProductCategory.objects.all())
-                response = PostbackButtonsResponse(message='Que producto?', elements=elements)
+                response = QuickReplyResponse(message='Que cosa?', elements=elements)
             elif message == 'NO_JUICE':
                 response = SimpleTextMessage(message='Cieza ctm')
+            elif 'CATEGORY_' in message:
+                category_id = message.split('_')[1]
+                category = ProductCategory.objects.get(id=category_id)
+                elements = Product.objects.to_quick_reply(Product.objects.filter(category=category))
+                response = PostbackButtonsResponse(message='Que {0}?'.format(category.description), elements=elements)
+            elif 'PRODUCT_' in message:
+                product_id = message.split('_')[1]
+                product = Product.objects.get(id=product_id)
+                elements = Product.objects.to_amount_reply(product)
+                response = QuickReplyResponse(message='Cuantos?', elements=elements)
             else:
                 response = ErrorResponse()
             self.send_message(sender_id, response)
-
-            self.send_message(sender_id, ErrorResponse())
 
     def recive_message(self, data={}):
         if data.get('object', None) == "page":
@@ -48,7 +57,10 @@ class MessageViewSet(viewsets.ModelViewSet):
                 for messaging_event in entry.get('messaging', []):
                     sender_id = messaging_event.get('sender', {}).get('id', None)
                     if messaging_event.get('message', None):
-                        message_text = messaging_event.get('message', {}).get('text', '')
+                        message = messaging_event.get('message', {})
+                        message_text = message.get('text', '')
+                        if message.get('quick_reply', None):
+                            message_text = message.get('quick_reply').get('payload')
                         return sender_id, message_text
                     if messaging_event.get('postback', None):
                         postback = messaging_event.get('postback')

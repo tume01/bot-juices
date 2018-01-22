@@ -38,12 +38,22 @@ class ProductManager(models.Manager):
         quick_replies = []
         for element in queryset:
             quick_reply = {
-                'title': '{0} - S/.{1}'.format(element.description, element.price),
+                'title': '{0} - S/.{1}'.format(element.description, round(element.price, 2)),
                 'payload': 'PRODUCT_{0}'.format(element.id),
             }
             quick_replies.append(quick_reply)
-
         return quick_replies
+
+    def to_amount_reply(self, product):
+        quick_replies = []
+        for index in range(1, 5):
+            quick_reply = {
+                'title': index,
+                'payload': 'AMOUNT_{0}_{1}'.format(index, product.id)
+            }
+        quick_replies.append(quick_reply)
+        return quick_replies
+
 
 class Product(TimeStampedModel):
 
@@ -63,6 +73,8 @@ class Product(TimeStampedModel):
         on_delete=models.CASCADE,
         related_name='products',
     )
+
+    objects = ProductManager()
 
     def __str__(self):
         return self.description
