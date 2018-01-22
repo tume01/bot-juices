@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from bot.models import *
+from products.models import *
 from bot.serializers import ConversationSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -26,12 +27,19 @@ class MessageViewSet(viewsets.ModelViewSet):
         return HttpResponse(request.GET['hub.challenge'], content_type='text/plain')
 
     def make_response(self, sender_id, message):
-        conversation, created = Conversation.objects.get_or_create(sender_id=sender_id)
+        conversation, created = Conversation.objects.get_or_create(sender_id=sender_id, finished=False)
         if created:
             self.send_message(sender_id, InitialResponse())
         else:
             if message == 'YES_JUICE':
-                pass
+                elements = ProductCategory.objects.to_quick_reply(ProductCategory.objects.all())
+                response = PostbackButtonsResponse(message='Que producto?', elements=elements)
+            elif message == 'NO_JUICE':
+                response = SimpleTextMessage(message='Cieza ctm')
+            else:
+                response = ErrorResponse()
+            self.send_message(sender_id, response)
+
             self.send_message(sender_id, ErrorResponse())
 
     def recive_message(self, data={}):

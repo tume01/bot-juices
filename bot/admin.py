@@ -9,4 +9,5 @@ class ConversationAdmin(admin.ModelAdmin):
 
     list_display = (
         'id',
+        'finished',
     )
