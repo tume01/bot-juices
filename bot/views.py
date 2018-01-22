@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from bot.models import *
-from bot.serializers import MessageSerializer
+from bot.serializers import ConversationSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import list_route
@@ -13,8 +13,8 @@ import requests
 
 
 class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all()
-    serializer_class = MessageSerializer
+    queryset = Conversation.objects.all()
+    serializer_class = ConversationSerializer
 
     @list_route(methods=['post', 'get'])
     def webhook(self, request):
