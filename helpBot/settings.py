@@ -25,12 +25,7 @@ SECRET_KEY = 'fg3q-msmsgh5ww4&#%5r4@rw3mylb#+a5l4(5st4z1-v#u^sul'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'a8878aed.ngrok.io',
-    '127.0.0.1',
-    'localhost',
-    '775b3c90.ngrok.io',
-]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -92,9 +87,9 @@ WSGI_APPLICATION = 'helpBot.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ods',
-        'USER': 'root',
-        'PASSWORD': 'root',
+        'NAME': 'bot_juice',
+        'USER': 'bot_juice',
+        'PASSWORD': 'secret',
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'OPTIONS': {
@@ -166,6 +161,6 @@ API_PERMISSIONS = (
     'patch',
 )
 
-BOT_APP_TOKEN = 'EAAFALgO5ZCHUBAFJV2VZCq5EWetEijbYosi5cZAWOojtkFdPoZCDFlo2dplUl9mHO1QQ274nhaFAJeUzcZBxFS8iKispNwMKNjh9e6OR4kkbcTK63lo6rfs0UrMNAU3niOZCWovfH92ZBzI1pt4cZBo9ZAhhMd0hMVAGQeZC5msqALswZDZD'
+BOT_APP_TOKEN = 'EAAb8sZAYKDU4BABh82PFmQTexUZClmVd8SzWAhvOaDhSpHXcZArumnBpxpZBxSZAIgHBCUQ1NSJtrYZCAJTPZAhu5T0jDZBCENzGw51aG1nD5EQTt3RWfE6swxJ3EhhLXGtaxwZAjTlnw5ZCYGrlJo2KjMNT6O5TH5NnXGA73I2TJLwQZDZD'
 
 CORS_ORIGIN_ALLOW_ALL = True
