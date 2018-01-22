@@ -5,20 +5,6 @@ from django_mysql.models import Model, JSONField
 from django.db import models
 
 
-class Message(TimeStampedModel, Model):
-
-    text = models.CharField(
-        max_length=5000,
-        help_text='user message',
-        blank=True,
-        null=True,
-    )
-
-    class Meta:
-        ordering = ['-created']
-        default_permissions = settings.API_PERMISSIONS
-
-
 class Conversation(TimeStampedModel):
 
     sender_id = models.CharField(

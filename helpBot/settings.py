@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 
 APPLICATION_APPS = [
     'bot.apps.BotConfig',
-    'category.apps.CategoryConfig',
+    'products.apps.ProductsConfig',
 ]
 
 INSTALLED_APPS += APPLICATION_APPS

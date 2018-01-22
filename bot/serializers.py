@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-from bot.models import Message
+from bot.models import Conversation
 from rest_framework import serializers
 
 
-class MessageSerializer(serializers.ModelSerializer):
+class ConversationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Message
+        model = Conversation
         fields = (
             'id',
-            'text',
         )
