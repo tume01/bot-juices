@@ -28,6 +28,12 @@ class Product(TimeStampedModel):
         null=True,
     )
 
+    category = models.ForeignKey(
+        ProductCategory,
+        on_delete=models.CASCADE,
+        related_name='products',
+    )
+
     class Meta:
         ordering = ['-created']
         default_permissions = settings.API_PERMISSIONS
