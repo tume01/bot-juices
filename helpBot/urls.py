@@ -7,7 +7,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 public_apis = [
     url(r'^api/v1/', include([
         url(r'', include('bot.urls')),
-        url(r'', include('category.urls')),
     ])),
 ]
 
