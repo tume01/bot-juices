@@ -21,65 +21,11 @@ class Message(TimeStampedModel, Model):
 
 class Conversation(TimeStampedModel):
 
-    context = JSONField()
     sender_id = models.CharField(
         max_length=5000,
     )
 
-    grade = models.CharField(
-        max_length=100,
-        null=True,
-    )
-
-    confidence_person = models.CharField(
-        max_length=100,
-        null=True,
-    )
-
-    grade_section = models.CharField(
-        max_length=100,
-        null=True,
-    )
-
-    grade_level = models.CharField(
-        max_length=100,
-        null=True,
-    )
-
-    problem_location = models.CharField(
-        max_length=100,
-        null=True,
-    )
-
-    genre = models.CharField(
-        max_length=10,
-        null=True,
-    )
-
-    violence_type = models.CharField(
-        max_length=100,
-        null=True,
-    )
-
-    topics = JSONField()
-
-    district = models.CharField(
-        max_length=100,
-        null=True,
-    )
-
-    sentiment = models.CharField(
-        max_length=100,
-        null=True,
-    )
-
-    sentiment_value = models.DecimalField(
-        max_digits=19,
-        decimal_places=10,
-        null=True,
-    )
-
-    detect_sentiment = models.NullBooleanField()
+    finished = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-created']
@@ -105,7 +51,7 @@ class PostbackButtonsResponse(BaseResponse):
                 'payload': {
                     'template_type': self.template_type,
                     'text': self.message,
-                    'buttons': [self.map_buttons(button) for button in buttons],
+                    'buttons': [self.map_buttons(button) for button in self.elements],
                 }
             }
         }
@@ -134,7 +80,7 @@ class QuickReplyResponse(BaseResponse):
     def render(self):
         return {
             'text': self.message,
-            'quick_replies': [self.map_buttons(element) for element in elements],
+            'quick_replies': [self.map_buttons(element) for element in self.elements],
         }
 
     def map_buttons(self, element):
@@ -145,7 +91,7 @@ class QuickReplyResponse(BaseResponse):
         }
 
 
-class InitialResponse(BaseResponse):
+class InitialResponse(QuickReplyResponse):
     """docstring for InitialResponse"""
     def __init__(self):
         self.message = 'Jugos?'

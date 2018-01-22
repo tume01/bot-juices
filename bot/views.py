@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from bot.models import Message, Conversation
+from bot.models import *
 from bot.serializers import MessageSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -19,17 +19,20 @@ class MessageViewSet(viewsets.ModelViewSet):
     @list_route(methods=['post', 'get'])
     def webhook(self, request):
         if request.method == 'POST':
-            sender_id, message, initial_converstation = self.recive_message(data=request.data)
+            sender_id, message = self.recive_message(data=request.data)
             if sender_id and message:
-                self.make_response(sender_id, message, initial_converstation)
+                self.make_response(sender_id, message)
             return Response(status=status.HTTP_201_CREATED)
         return HttpResponse(request.GET['hub.challenge'], content_type='text/plain')
 
-    def make_response(self, sender_id, message, initial_converstation):
+    def make_response(self, sender_id, message):
         conversation, created = Conversation.objects.get_or_create(sender_id=sender_id)
         if created:
             self.send_message(sender_id, InitialResponse())
-        self.send_message(sender_id, message)
+        else:
+            if message == 'YES_JUICE':
+                pass
+            self.send_message(sender_id, ErrorResponse())
 
     def recive_message(self, data={}):
         if data.get('object', None) == "page":
@@ -72,10 +75,3 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def log(self, message):  # simple wrapper for logging to stdout on heroku
         print(str(message))
-
-    def map_buttons(self, button_text):
-        return {
-            "type": "postback",
-            "title": button_text,
-            "payload": button_text,
-        }
