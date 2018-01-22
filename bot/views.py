@@ -27,6 +27,8 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def make_response(self, sender_id, message, initial_converstation):
         conversation, created = Conversation.objects.get_or_create(sender_id=sender_id)
+        if created:
+            self.send_message(sender_id, InitialResponse())
         self.send_message(sender_id, message)
 
     def recive_message(self, data={}):
@@ -36,34 +38,24 @@ class MessageViewSet(viewsets.ModelViewSet):
                     sender_id = messaging_event.get('sender', {}).get('id', None)
                     if messaging_event.get('message', None):
                         message_text = messaging_event.get('message', {}).get('text', '')
-                        return sender_id, message_text, False
+                        return sender_id, message_text
                     if messaging_event.get('postback', None):
                         postback = messaging_event.get('postback')
                         message_text = postback.get('payload')
-                        initial_converstation = message_text == 'START'
-                        return sender_id, message_text, initial_converstation
-        return None, None, None
+                        return sender_id, message_text
+        return None, None
 
-    def send_message(self, recipient_id, message_text, buttons=None):
+    def send_message(self, recipient_id, response):
         params = {
             "access_token": settings.BOT_APP_TOKEN
         }
+
         headers = {
             "Content-Type": "application/json"
         }
-        if buttons is None:
-            message = {'text': message_text}
-        else:
-            message = {
-                'attachment': {
-                    "type": "template",
-                    "payload": {
-                        "template_type": "button",
-                        "text": message_text,
-                        "buttons": [self.map_buttons(button) for button in buttons],
-                    }
-                }
-            }
+
+        message = response.render()
+
         data = json.dumps({
             "recipient": {
                 "id": recipient_id
@@ -73,6 +65,7 @@ class MessageViewSet(viewsets.ModelViewSet):
 
         r = requests.post("https://graph.facebook.com/v2.6/me/messages",
                           params=params, headers=headers, data=data)
+
         if r.status_code != 200:
             self.log(r.status_code)
             self.log(r.text)
