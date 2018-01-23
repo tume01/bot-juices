@@ -79,8 +79,8 @@ class QuickReplyResponse(BaseResponse):
 
 class InitialResponse(QuickReplyResponse):
     """docstring for InitialResponse"""
-    def __init__(self):
-        self.message = 'Jugos?'
+    def __init__(self, message='Jugos?'):
+        self.message = message
         self.elements = [
             {
                 'title': 'Si',
@@ -97,7 +97,20 @@ class ErrorResponse(SimpleTextMessage):
     def __init__(self):
         self.message = 'No entendi, Igor ctm'
 
+class MoreProductsResponse(QuickReplyResponse):
 
+    def __init__(self):
+        self.message = 'Algo mas?'
+        self.elements = [
+            {
+                'title': 'Si',
+                'payload': 'YES_JUICE',
+            },
+            {
+                'title': 'No',
+                'payload': 'NO_JUICE',
+            },
+        ]
 
 
 
